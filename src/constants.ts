@@ -14,3 +14,5 @@ export const AVAILABLE_UNITS = [
 ]
 
 export const INITIAL_UNIT_ACTIVE = AVAILABLE_UNITS[0]
+
+export const LOCAL_STORAGE_UNIT_ACTIVE_FILTER = 'unit-active-filter'
