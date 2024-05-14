@@ -1,6 +1,16 @@
-export type SensorType = 'energy' | 'vibration' | null
+export enum Sensor {
+  ENERGY = 'energy',
+  VIBRATION = 'vibration',
+}
 
-export type Status = 'operating' | 'alert' | null
+export enum Status {
+  OPERATING = 'operating',
+  ALERT = 'alert',
+}
+
+export type SensorType = Sensor | null
+
+export type StatusType = Status | null
 
 export interface Location {
   name: string
@@ -14,5 +24,5 @@ export interface Asset {
   locationId: string | null
   parentId: string | null
   sensorType?: SensorType
-  status?: Status
+  status?: StatusType
 }
