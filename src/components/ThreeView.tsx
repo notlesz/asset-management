@@ -1,4 +1,5 @@
-import { KeyboardEvent, useRef, useState } from 'react'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { KeyboardEvent, useState } from 'react'
 import { TreeNode } from '../utils/build-unit-tree'
 import { cn } from '../utils/cn'
 
@@ -6,6 +7,8 @@ import { AiOutlineCodepen, AiOutlineDown } from 'react-icons/ai'
 import { FaBolt } from 'react-icons/fa6'
 import { GoLocation } from 'react-icons/go'
 import { IoCubeOutline } from 'react-icons/io5'
+
+import { Virtuoso } from 'react-virtuoso'
 import { SensorType, Status } from '../types'
 import { NodeType, getNodeType } from '../utils/get-node-type'
 
@@ -91,8 +94,6 @@ const NodeLabel = ({
 const Node = (node: TreeNode) => {
   const [isCollapsed, setIsCollapsed] = useState(false)
 
-  const refitem = useRef<HTMLLIElement>(null)
-
   const { name, children, id, sensorType, status } = node
 
   const nodeType = getNodeType(node)
@@ -106,7 +107,7 @@ const Node = (node: TreeNode) => {
   }
 
   return (
-    <li id={id} ref={refitem}>
+    <div id={id}>
       <NodeLabel
         handleCollapsed={handleCollapsed}
         labelValue={name}
@@ -128,18 +129,22 @@ const Node = (node: TreeNode) => {
           ))}
         </ul>
       )}
-    </li>
+    </div>
   )
 }
 
 export default function ThreeView({ data }: ThreeViewProps) {
+  const hasData = !!data.length
+
+  if (!hasData) {
+    return (
+      <span className="text-gray-600 text-sm block text-center mt-4">
+        Nenhum Ativo ou Local encontrado! <br /> Limpe a pesquisa ou os filtros para ver os items disponíveis.
+      </span>
+    )
+  }
+
   return (
-    <ul>
-      {data.map((row) => (
-        <div key={row.id}>
-          <Node {...row} />
-        </div>
-      ))}
-    </ul>
+    <Virtuoso style={{ height: '100%' }} totalCount={data.length} itemContent={(index) => <Node {...data[index]} />} />
   )
 }
