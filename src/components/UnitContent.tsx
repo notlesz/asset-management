@@ -4,7 +4,7 @@ import useUnitContext from '../hooks/useUnitContext'
 import { cn } from '../utils/cn'
 import Button from './Button'
 import Search from './Search'
-import ThreeView from './ThreeView'
+import TreeView from './TreeView'
 
 export default function UnitContent() {
   const { activeUnit, activeFilter, handleActiveFilter, search, handleSearch, unitList } = useUnitContext()
@@ -51,7 +51,7 @@ export default function UnitContent() {
       <main className="flex-1 flex gap-2 overflow-hidden">
         <div className="flex-1 border rounded border-card ">
           <Search value={search} handleSearch={handleSearch} />
-          <ThreeView data={unitList} />
+          <TreeView data={unitList} />
         </div>
       </main>
     </div>

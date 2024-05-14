@@ -133,7 +133,7 @@ const Node = (node: TreeNode) => {
   )
 }
 
-export default function ThreeView({ data }: ThreeViewProps) {
+export default function TreeView({ data }: ThreeViewProps) {
   const hasData = !!data.length
 
   if (!hasData) {
