@@ -49,11 +49,9 @@ export default function UnitContent() {
         </div>
       </header>
       <main className="flex-1 flex gap-2 overflow-hidden">
-        <div className="flex-1 border rounded border-card overflow-auto">
+        <div className="flex-1 border rounded border-card ">
           <Search value={search} handleSearch={handleSearch} />
-          <div className="px-1 py-2 overflow-auto " style={{ maxHeight: 'calc(100% - 50px)' }}>
-            <ThreeView data={unitList} />
-          </div>
+          <ThreeView data={unitList} />
         </div>
       </main>
     </div>
