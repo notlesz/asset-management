@@ -7,7 +7,7 @@ export interface TreeNode {
   locationId?: string | null
   children?: TreeNode[]
   sensorType?: SensorType
-  status?: Status
+  status?: Status | null
 }
 
 export default function buildTree(locations: Location[], assets: Asset[]): TreeNode[] {

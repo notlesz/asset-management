@@ -23,7 +23,7 @@ interface NodeLabelProps {
   handleCollapsed: () => void
   labelValue: string
   sensorType?: SensorType
-  status?: Status
+  status?: Status | null
 }
 
 const getIconByNodeType = (typeNode: NodeType) => {
