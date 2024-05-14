@@ -3,11 +3,11 @@ import { TreeNode } from './build-unit-tree'
 export type NodeType = 'location' | 'sub-location' | 'asset' | 'component'
 
 export const getNodeType = (node: TreeNode): NodeType => {
-  const { parentId, sensorType, locationId } = node
+  const { parentId, sensorType } = node
 
   if (sensorType) return 'component'
 
-  if (locationId && !sensorType) return 'asset'
+  if (sensorType === null) return 'asset'
 
   if (parentId) return 'sub-location'
 
