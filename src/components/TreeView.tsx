@@ -8,6 +8,7 @@ import { FaBolt } from 'react-icons/fa6'
 import { GoLocation } from 'react-icons/go'
 import { IoCubeOutline } from 'react-icons/io5'
 
+import { uniqueId } from 'lodash'
 import { Virtuoso } from 'react-virtuoso'
 import { SensorType, Status } from '../types'
 import { NodeType, getNodeType } from '../utils/get-node-type'
@@ -25,6 +26,8 @@ interface NodeLabelProps {
   sensorType?: SensorType
   status?: Status | null
 }
+
+const getUniqueId = () => uniqueId()
 
 const getIconByNodeType = (typeNode: NodeType) => {
   const availableIcons = {
@@ -125,7 +128,7 @@ const Node = (node: TreeNode) => {
           })}
         >
           {children.map((row) => (
-            <Node key={row.id} {...row} />
+            <Node key={getUniqueId()} {...row} />
           ))}
         </ul>
       )}
@@ -134,17 +137,11 @@ const Node = (node: TreeNode) => {
 }
 
 export default function TreeView({ data }: ThreeViewProps) {
-  const hasData = !!data.length
-
-  if (!hasData) {
-    return (
-      <span className="text-gray-600 text-sm block text-center mt-4">
-        Nenhum Ativo ou Local encontrado! <br /> Limpe a pesquisa ou os filtros para ver os items disponíveis.
-      </span>
-    )
-  }
-
   return (
-    <Virtuoso style={{ height: '100%' }} totalCount={data.length} itemContent={(index) => <Node {...data[index]} />} />
+    <Virtuoso
+      style={{ height: '100%' }}
+      totalCount={data.length}
+      itemContent={(index) => <Node key={getUniqueId()} {...data[index]} />}
+    />
   )
 }

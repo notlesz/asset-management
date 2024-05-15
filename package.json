@@ -11,14 +11,17 @@
   },
   "dependencies": {
     "clsx": "^2.1.1",
+    "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.2.1",
+    "react-virtualized-auto-sizer": "^1.0.24",
     "react-virtuoso": "^4.7.10",
     "tailwind-merge": "^2.3.0",
     "tailwind-variants": "^0.2.1"
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.1",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
