@@ -11,33 +11,36 @@ export interface TreeNode {
 }
 
 export default function buildTree(locations: Location[], assets: Asset[]): TreeNode[] {
-  const nodes: TreeNode[] = locations
-    .map((loc) => ({
-      ...loc,
-      children: [],
-    }))
-    .concat(
-      assets.map((asset) => ({
-        ...asset,
-        parentId: asset.locationId || asset.parentId,
-        children: [],
-      }))
-    )
-
+  const nodesById = new Map<string, TreeNode>()
   const rootNodes: TreeNode[] = []
-  const nodesById: { [key: string]: TreeNode } = {}
 
-  nodes.forEach((node) => {
-    nodesById[node.id] = node
-    if (node.parentId === null) {
-      rootNodes.push(node)
+  const addChildNode = (parentId: string | undefined, childNode: TreeNode) => {
+    const parentNode = parentId ? nodesById.get(parentId) : undefined
+    if (parentNode) {
+      parentNode.children!.push(childNode)
     } else {
-      const parentNode = nodesById[node.parentId]
-      if (parentNode) {
-        parentNode.children = parentNode.children ? [...parentNode.children, node] : [node]
-      }
+      rootNodes.push(childNode)
     }
-  })
+  }
+
+  for (const location of locations) {
+    const locNode: TreeNode = { ...location, children: [] }
+    nodesById.set(locNode.id, locNode)
+    addChildNode(locNode.parentId!, locNode)
+  }
+
+  for (const asset of assets) {
+    const assetNode: TreeNode = { ...asset, children: [] }
+    nodesById.set(assetNode.id, assetNode)
+  }
+
+  for (const node of nodesById.values()) {
+    if (node.sensorType === undefined) {
+      addChildNode(node.locationId!, node)
+    } else {
+      addChildNode(node.parentId! || node.locationId!, node)
+    }
+  }
 
   return rootNodes
 }
