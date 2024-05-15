@@ -17,12 +17,12 @@ export default function filterUnit(
     const { name, children, sensorType, status } = curr
 
     const matchEnergySensor = isEnergySensorFilter && sensorType === Sensor.ENERGY
-    const matchCriticalFilter = isCriticalFilter && status === Status.ALERT
+    const matchCriticalFilter = isCriticalFilter && status === Status.ALERT && sensorType !== Sensor.ENERGY
     const matchSearch = search && name.toLowerCase().includes(search.toLowerCase())
 
     const hasChildren = children && children.length > 0
 
-    const allMatch = matchEnergySensor || matchCriticalFilter || matchSearch
+    const allMatch = matchEnergySensor || matchSearch || matchCriticalFilter
 
     if (allMatch) {
       acc.push(curr)
