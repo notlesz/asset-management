@@ -12,7 +12,7 @@ export default function ComponentData() {
       })}
     >
       <header className="px-4 py-3 border-b border-card">
-        <h3 className="text-gray-950 font-semibold text-lg ">{activeAsset?.name}</h3>
+        <h3 className="text-gray-950 font-semibold text-lg uppercase">{activeAsset?.name}</h3>
       </header>
       <main className="p-6 flex flex-col gap-6">
         <section className="flex items-center gap-6">
