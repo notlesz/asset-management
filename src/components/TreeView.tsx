@@ -10,11 +10,13 @@ import { IoCubeOutline } from 'react-icons/io5'
 
 import { uniqueId } from 'lodash'
 import { Virtuoso } from 'react-virtuoso'
-import { SensorType, Status } from '../types'
+import { Asset, SensorType, Status } from '../types'
 import { NodeType, getNodeType } from '../utils/get-node-type'
 
 interface ThreeViewProps {
   data: Array<TreeNode>
+  onClickAsset: (nextAsset: Asset) => void
+  activeAsset: Asset | null
 }
 
 interface NodeLabelProps {
@@ -25,6 +27,13 @@ interface NodeLabelProps {
   labelValue: string
   sensorType?: SensorType
   status?: Status | null
+  isSelectedComponent: boolean
+}
+
+interface NodeProps {
+  node: TreeNode
+  onClickAsset: (nextAsset: Asset) => void
+  activeAsset: Asset | null
 }
 
 const getUniqueId = () => uniqueId()
@@ -48,6 +57,7 @@ const NodeLabel = ({
   nodeType,
   sensorType,
   status,
+  isSelectedComponent,
 }: NodeLabelProps) => {
   const isNodeComponent = nodeType === 'component'
   const isOperating = status === 'operating'
@@ -65,52 +75,83 @@ const NodeLabel = ({
   return (
     <div
       tabIndex={0}
-      className={cn('px-5 py-4 flex items-center gap-2', {
+      className={cn('ps-5 my-4', {
         'cursor-pointer': hasChildren || isNodeComponent,
       })}
-      onClick={handleCollapsed}
+      onClick={(event) => {
+        event.stopPropagation()
+        handleCollapsed()
+      }}
       onKeyDown={handleKeyPress}
     >
-      {hasChildren && (
-        <AiOutlineDown
-          size={10}
-          className={cn('', {
-            'rotate-180': isCollapsed,
-          })}
-        />
-      )}
-      <Icon color="#2188FF" size={22} />
-      <span
-        className={cn('after:content=[" "] after:inline-block after:w-2 after:h-2 after:rounded after:ms-2', {
-          'after:bg-green-500': isOperating,
-          'after:bg-red-500': isAlert,
-          'after:content-none': !isNodeComponent || isEnergySensor,
+      <div
+        className={cn('ps-1 flex items-center gap-2', {
+          'bg-blue-500 text-white': isSelectedComponent,
         })}
       >
-        {labelValue}
-      </span>
-      {isEnergySensor && <FaBolt className="text-green-500" />}
+        {hasChildren && (
+          <AiOutlineDown
+            size={10}
+            className={cn('', {
+              'rotate-180': isCollapsed,
+            })}
+          />
+        )}
+        <Icon
+          className={cn('text-blue-500', {
+            'text-white': isSelectedComponent,
+          })}
+          size={22}
+        />
+        <span
+          className={cn(
+            'uppercase after:content=[" "] after:inline-block after:w-2 after:h-2 after:rounded after:ms-2',
+            {
+              'after:bg-green-500': isOperating,
+              'after:bg-red-500': isAlert,
+              'after:content-none': !isNodeComponent || isEnergySensor,
+            }
+          )}
+        >
+          {labelValue}
+        </span>
+        {isEnergySensor && <FaBolt className="text-green-500" />}
+      </div>
     </div>
   )
 }
 
-const Node = (node: TreeNode) => {
+const Node = ({ node, activeAsset, onClickAsset }: NodeProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false)
 
-  const { name, children, id, sensorType, status } = node
+  const { name, children, id, sensorType, status, locationId, parentId } = node
 
   const nodeType = getNodeType(node)
 
   const hasChildren = !!children && children.length > 0
 
+  const isSelectedComponent = activeAsset?.id === node.id && nodeType === 'component'
+
   const handleCollapsed = () => {
     if (hasChildren) {
       setIsCollapsed(!isCollapsed)
+
+      return
+    }
+    if (nodeType === 'component') {
+      onClickAsset({
+        id,
+        locationId: locationId!,
+        name,
+        parentId,
+        sensorType,
+        status,
+      })
     }
   }
 
   return (
-    <div id={id}>
+    <div>
       <NodeLabel
         handleCollapsed={handleCollapsed}
         labelValue={name}
@@ -119,6 +160,7 @@ const Node = (node: TreeNode) => {
         nodeType={nodeType}
         sensorType={sensorType}
         status={status}
+        isSelectedComponent={isSelectedComponent}
       />
       {hasChildren && (
         <ul
@@ -128,7 +170,7 @@ const Node = (node: TreeNode) => {
           })}
         >
           {children.map((row) => (
-            <Node key={getUniqueId()} {...row} />
+            <Node key={getUniqueId()} node={row} onClickAsset={onClickAsset} activeAsset={activeAsset} />
           ))}
         </ul>
       )}
@@ -136,12 +178,14 @@ const Node = (node: TreeNode) => {
   )
 }
 
-export default function TreeView({ data }: ThreeViewProps) {
+export default function TreeView({ data, activeAsset, onClickAsset }: ThreeViewProps) {
   return (
     <Virtuoso
       style={{ height: '100%' }}
       totalCount={data.length}
-      itemContent={(index) => <Node key={getUniqueId()} {...data[index]} />}
+      itemContent={(index) => (
+        <Node key={data[index].id} node={data[index]} onClickAsset={onClickAsset} activeAsset={activeAsset} />
+      )}
     />
   )
 }

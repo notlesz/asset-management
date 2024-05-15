@@ -3,11 +3,21 @@ import { Filter } from '../context/type'
 import useUnitContext from '../hooks/useUnitContext'
 import { cn } from '../utils/cn'
 import Button from './Button'
+import ComponentData from './ComponentData'
 import Search from './Search'
 import TreeView from './TreeView'
 
 export default function UnitContent() {
-  const { activeUnit, activeFilter, handleActiveFilter, search, handleSearch, unitList, activeAsset } = useUnitContext()
+  const {
+    activeUnit,
+    activeFilter,
+    handleActiveFilter,
+    search,
+    handleSearch,
+    unitList,
+    handleActiveAsset,
+    activeAsset,
+  } = useUnitContext()
 
   const isEnergySensorFilter = activeFilter === 'ENERGY_SENSOR'
   const isCriticalFilter = activeFilter === 'CRITICAL'
@@ -56,18 +66,18 @@ export default function UnitContent() {
           {unitList.isLoading ? (
             <span className="text-gray-600 text-sm block text-center mt-4">Carregando...</span>
           ) : hasData ? (
-            <TreeView data={unitList.data} />
+            <TreeView
+              data={unitList.data}
+              onClickAsset={(nextAsset) => handleActiveAsset(nextAsset)}
+              activeAsset={activeAsset}
+            />
           ) : (
             <span className="text-gray-600 text-sm block text-center mt-4">
               Nenhum Ativo ou Local encontrado! <br /> Limpe a pesquisa ou os filtros para ver os items disponíveis.
             </span>
           )}
         </section>
-        <section
-          className={cn('flex-2 border rounded border-card', {
-            invisible: !activeAsset,
-          })}
-        ></section>
+        <ComponentData />
       </main>
     </div>
   )

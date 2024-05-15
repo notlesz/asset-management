@@ -3,6 +3,7 @@ import { AVAILABLE_UNITS, LOCAL_STORAGE_UNIT_ACTIVE_FILTER } from '../constants'
 import { ActiveUnitType, FilterType, UnitContextProps } from './type'
 
 import useUnitByName from '../hooks/useUnitByName'
+import { Asset } from '../types'
 import filterUnit from '../utils/filter-unit'
 import { setLocalStorageItem } from '../utils/local-storage'
 import reducer, { ActionTypes, INITIAL_STATE } from './reducer'
@@ -43,12 +44,20 @@ export default function UnitContextProvider({ children }: { children: React.Reac
     })
   }
 
+  const handleActiveAsset = (nextAsset: Asset) => {
+    dispatch({
+      type: ActionTypes.SET_ACTIVE_ASSET,
+      payload: nextAsset,
+    })
+  }
+
   const props = {
     availableUnits: AVAILABLE_UNITS,
     ...unitData,
     handleActiveUnit,
     handleSearch,
     handleActiveFilter,
+    handleActiveAsset,
     unitList: {
       data: listUnitsFiltered,
       isLoading,

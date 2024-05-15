@@ -26,4 +26,5 @@ export interface UnitContextProps {
   handleActiveUnit: (nextActive: ActiveUnitType) => void
   handleSearch: (query: string) => void
   handleActiveFilter: (nextFilter: FilterType) => void
+  handleActiveAsset: (nextAsset: Asset) => void
 }
