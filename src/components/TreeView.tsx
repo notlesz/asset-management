@@ -8,7 +8,6 @@ import { FaBolt } from 'react-icons/fa6'
 import { GoLocation } from 'react-icons/go'
 import { IoCubeOutline } from 'react-icons/io5'
 
-import { uniqueId } from 'lodash'
 import { Virtuoso } from 'react-virtuoso'
 import { Asset, SensorType, Status } from '../types'
 import { NodeType, getNodeType } from '../utils/get-node-type'
@@ -35,8 +34,6 @@ interface NodeProps {
   onClickAsset: (nextAsset: Asset) => void
   activeAsset: Asset | null
 }
-
-const getUniqueId = () => uniqueId()
 
 const getIconByNodeType = (typeNode: NodeType) => {
   const availableIcons = {
@@ -170,7 +167,7 @@ const Node = ({ node, activeAsset, onClickAsset }: NodeProps) => {
           })}
         >
           {children.map((row) => (
-            <Node key={getUniqueId()} node={row} onClickAsset={onClickAsset} activeAsset={activeAsset} />
+            <Node key={row.id} node={row} onClickAsset={onClickAsset} activeAsset={activeAsset} />
           ))}
         </ul>
       )}
