@@ -7,10 +7,12 @@ import Search from './Search'
 import TreeView from './TreeView'
 
 export default function UnitContent() {
-  const { activeUnit, activeFilter, handleActiveFilter, search, handleSearch, unitList } = useUnitContext()
+  const { activeUnit, activeFilter, handleActiveFilter, search, handleSearch, unitList, activeAsset } = useUnitContext()
 
   const isEnergySensorFilter = activeFilter === 'ENERGY_SENSOR'
   const isCriticalFilter = activeFilter === 'CRITICAL'
+
+  const hasData = !!unitList.data.length
 
   return (
     <div className="flex flex-col gap-3 h-[95%] bg-white border rounded border-card px-4 py-[18px] overflow-hidden">
@@ -49,10 +51,23 @@ export default function UnitContent() {
         </div>
       </header>
       <main className="flex-1 flex gap-2 overflow-hidden">
-        <div className="flex-1 border rounded border-card ">
+        <section className="flex-1 border rounded border-card ">
           <Search value={search} handleSearch={handleSearch} />
-          <TreeView data={unitList} />
-        </div>
+          {unitList.isLoading ? (
+            <span className="text-gray-600 text-sm block text-center mt-4">Carregando...</span>
+          ) : hasData ? (
+            <TreeView data={unitList.data} />
+          ) : (
+            <span className="text-gray-600 text-sm block text-center mt-4">
+              Nenhum Ativo ou Local encontrado! <br /> Limpe a pesquisa ou os filtros para ver os items disponíveis.
+            </span>
+          )}
+        </section>
+        <section
+          className={cn('flex-2 border rounded border-card', {
+            invisible: !activeAsset,
+          })}
+        ></section>
       </main>
     </div>
   )

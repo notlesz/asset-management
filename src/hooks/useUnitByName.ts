@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Asset } from '../types'
 import buildTree, { TreeNode } from '../utils/build-unit-tree'
 
@@ -19,21 +19,20 @@ export const fetcherUnit = async (unit: string) => {
 
 export default function useUnitByName(unitName: string) {
   const [unitList, setUnitList] = useState<TreeNode[]>([])
-
-  const getUnit = useCallback(async (unitName: string) => {
-    const { assets, locations } = await fetcherUnit(unitName)
-
-    const unitTree = buildTree(locations, assets as Asset[])
-
-    setUnitList(unitTree)
-  }, [])
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     // eslint-disable-next-line no-extra-semi
     ;(async () => {
-      await getUnit(unitName)
-    })()
-  }, [unitName, getUnit])
+      setIsLoading(true)
+      const { assets, locations } = await fetcherUnit(unitName)
 
-  return unitList
+      const unitTree = buildTree(locations, assets as Asset[])
+
+      setUnitList(unitTree)
+      setIsLoading(false)
+    })()
+  }, [unitName])
+
+  return { isLoading, unitList }
 }

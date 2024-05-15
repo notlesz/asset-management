@@ -1,10 +1,10 @@
-import { createContext, useEffect, useMemo, useReducer } from 'react'
+import { createContext, useMemo, useReducer } from 'react'
 import { AVAILABLE_UNITS, LOCAL_STORAGE_UNIT_ACTIVE_FILTER } from '../constants'
 import { ActiveUnitType, FilterType, UnitContextProps } from './type'
 
 import useUnitByName from '../hooks/useUnitByName'
 import filterUnit from '../utils/filter-unit'
-import { getLocaStorageItem, setLocalStorageItem } from '../utils/local-storage'
+import { setLocalStorageItem } from '../utils/local-storage'
 import reducer, { ActionTypes, INITIAL_STATE } from './reducer'
 
 export const UnitContext = createContext<UnitContextProps | null>(null)
@@ -14,11 +14,11 @@ export default function UnitContextProvider({ children }: { children: React.Reac
 
   const { search, activeFilter } = unitData
 
-  const listUnits = useUnitByName(unitData.activeUnit.value)
+  const { unitList, isLoading } = useUnitByName(unitData.activeUnit.value)
 
   const listUnitsFiltered = useMemo(
-    () => filterUnit([...listUnits], { search, activeFilter }),
-    [search, activeFilter, listUnits]
+    () => filterUnit([...unitList], { search, activeFilter }),
+    [search, activeFilter, unitList]
   )
 
   const handleActiveUnit = (nextUnit: ActiveUnitType) => {
@@ -49,19 +49,11 @@ export default function UnitContextProvider({ children }: { children: React.Reac
     handleActiveUnit,
     handleSearch,
     handleActiveFilter,
-    unitList: listUnitsFiltered,
+    unitList: {
+      data: listUnitsFiltered,
+      isLoading,
+    },
   }
-
-  useEffect(() => {
-    const unitFilterStored = getLocaStorageItem(LOCAL_STORAGE_UNIT_ACTIVE_FILTER)
-
-    if (unitFilterStored) {
-      dispatch({
-        type: ActionTypes.SET_ACTIVE_UNIT,
-        payload: JSON.parse(unitFilterStored),
-      })
-    }
-  }, [])
 
   return <UnitContext.Provider value={props}>{children}</UnitContext.Provider>
 }

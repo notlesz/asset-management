@@ -19,7 +19,10 @@ export interface UnitContextProps {
   search: string
   activeFilter: FilterType
   activeAsset: Asset | null
-  unitList: TreeNode[]
+  unitList: {
+    data: TreeNode[]
+    isLoading: boolean
+  }
   handleActiveUnit: (nextActive: ActiveUnitType) => void
   handleSearch: (query: string) => void
   handleActiveFilter: (nextFilter: FilterType) => void
