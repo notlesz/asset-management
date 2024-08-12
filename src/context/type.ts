@@ -1,6 +1,4 @@
-import { AVAILABLE_UNITS, INITIAL_UNIT_ACTIVE } from '../constants'
 import { Asset } from '../types'
-import { TreeNode } from '../utils/build-unit-tree'
 
 export enum Filter {
   ENERGY_SENSOR = 'ENERGY_SENSOR',
@@ -9,21 +7,18 @@ export enum Filter {
 
 export type FilterType = Filter | null
 
-export type ActiveUnitType = typeof INITIAL_UNIT_ACTIVE
+export type Company = {
+  name: string
+  id: string
+}
 
-export type UnitListType = typeof AVAILABLE_UNITS
-
-export interface UnitContextProps {
-  activeUnit: ActiveUnitType
-  availableUnits: UnitListType
+export interface CompanyContextProps {
+  activeCompany: Company | null
   search: string
   activeFilter: FilterType
   activeAsset: Asset | null
-  unitList: {
-    data: TreeNode[]
-    isLoading: boolean
-  }
-  handleActiveUnit: (nextActive: ActiveUnitType) => void
+
+  handleActiveCompany: (nextCompany: Company) => void
   handleSearch: (query: string) => void
   handleActiveFilter: (nextFilter: FilterType) => void
   handleActiveAsset: (nextAsset: Asset) => void

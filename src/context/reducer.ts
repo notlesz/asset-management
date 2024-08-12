@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { INITIAL_UNIT_ACTIVE } from '../constants'
+
 import { Asset } from '../types'
-import { ActiveUnitType, FilterType } from './type'
+import { Company, FilterType } from './type'
 
 export enum ActionTypes {
   SET_ACTIVE_UNIT = 'SET_ACTIVE_UNIT',
@@ -16,14 +16,14 @@ interface Action {
 }
 
 export interface UnitDataState {
-  activeUnit: ActiveUnitType
+  activeCompany: Company | null
   search: string
   activeFilter: FilterType | null
   activeAsset: Asset | null
 }
 
 export const INITIAL_STATE = {
-  activeUnit: INITIAL_UNIT_ACTIVE,
+  activeCompany: null,
   search: '',
   activeFilter: null,
   activeAsset: null,
@@ -32,7 +32,7 @@ export const INITIAL_STATE = {
 const reducer = (state: UnitDataState, action: Action): UnitDataState => {
   switch (action.type) {
     case ActionTypes.SET_ACTIVE_UNIT:
-      return { ...state, activeUnit: action.payload }
+      return { ...state, activeCompany: action.payload }
     case ActionTypes.SET_SEARCH:
       return { ...state, search: action.payload }
     case ActionTypes.SET_ACTIVE_FILTER:
