@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.51.23",
+    "axios": "^1.7.3",
     "clsx": "^2.1.1",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
