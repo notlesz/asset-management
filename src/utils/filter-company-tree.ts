@@ -26,24 +26,23 @@ export default function filterCompanyTree(
 
   const filterTree = (nodes: TreeNode[]): TreeNode[] => {
     return nodes.reduce<TreeNode[]>((filteredNodes, node) => {
-      const nodeMatchesFilter = !activeFilter || matchesFilter(node)
-      if (!nodeMatchesFilter) return filteredNodes
-
-      const hasChildren = node.children && node.children.length > 0
+      let nodeMatchesFilter = !activeFilter || matchesFilter(node)
       let nodeMatchesSearch = !search || matchesSearch(node)
+
       let filteredChildren: TreeNode[] = []
 
-      if (hasChildren) {
-        filteredChildren = filterTree(node.children!)
+      if (node.children) {
+        filteredChildren = filterTree(node.children)
         if (filteredChildren.length > 0) {
+          nodeMatchesFilter = true
           nodeMatchesSearch = true
         }
       }
 
-      if (nodeMatchesSearch) {
+      if (nodeMatchesFilter && nodeMatchesSearch) {
         filteredNodes.push({
           ...node,
-          children: filteredChildren,
+          children: filteredChildren.length > 0 ? filteredChildren : undefined,
         })
       }
 
