@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { KeyboardEvent, useState } from 'react'
-import { TreeNode } from '../utils/build-unit-tree'
+import { KeyboardEvent } from 'react'
+import { TreeNode } from '../utils/build-company-tree'
 import { cn } from '../utils/cn'
 
 import { AiOutlineCodepen, AiOutlineDown } from 'react-icons/ai'
@@ -14,15 +14,16 @@ import { NodeType, getNodeType } from '../utils/get-node-type'
 
 interface ThreeViewProps {
   data: Array<TreeNode>
-  onClickAsset: (nextAsset: Asset) => void
+  onClickAsset: (nextAsset: TreeNode, isComponentType: boolean) => void
   activeAsset: Asset | null
+  expandedNodes: Set<string>
 }
 
 interface NodeLabelProps {
   nodeType: NodeType
   hasChildren: boolean
   isCollapsed: boolean
-  handleCollapsed: () => void
+  handleSelect: () => void
   labelValue: string
   sensorType?: SensorType
   status?: Status | null
@@ -31,8 +32,9 @@ interface NodeLabelProps {
 
 interface NodeProps {
   node: TreeNode
-  onClickAsset: (nextAsset: Asset) => void
+  onClickAsset: (nextAsset: TreeNode, isComponentType: boolean) => void
   activeAsset: Asset | null
+  expandedNodes: Set<string>
 }
 
 const getIconByNodeType = (typeNode: NodeType) => {
@@ -47,7 +49,7 @@ const getIconByNodeType = (typeNode: NodeType) => {
 }
 
 const NodeLabel = ({
-  handleCollapsed,
+  handleSelect,
   hasChildren,
   isCollapsed,
   labelValue,
@@ -63,7 +65,7 @@ const NodeLabel = ({
 
   const handleKeyPress = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter') {
-      handleCollapsed()
+      handleSelect()
     }
   }
 
@@ -77,7 +79,7 @@ const NodeLabel = ({
       })}
       onClick={(event) => {
         event.stopPropagation()
-        handleCollapsed()
+        handleSelect()
       }}
       onKeyDown={handleKeyPress}
     >
@@ -118,42 +120,30 @@ const NodeLabel = ({
   )
 }
 
-const Node = ({ node, activeAsset, onClickAsset }: NodeProps) => {
-  const [isCollapsed, setIsCollapsed] = useState(false)
-
-  const { name, children, id, sensorType, status, locationId, parentId } = node
+const Node = ({ node, activeAsset, onClickAsset, expandedNodes }: NodeProps) => {
+  const { name, children, sensorType, status } = node
 
   const nodeType = getNodeType(node)
 
   const hasChildren = !!children && children.length > 0
 
-  const isSelectedComponent = activeAsset?.id === node.id && nodeType === 'component'
+  const isExpanded = expandedNodes.has(node.id)
 
-  const handleCollapsed = () => {
-    if (hasChildren) {
-      setIsCollapsed(!isCollapsed)
+  const isComponentType = nodeType === 'component'
 
-      return
-    }
-    if (nodeType === 'component') {
-      onClickAsset({
-        id,
-        locationId: locationId!,
-        name,
-        parentId,
-        sensorType,
-        status,
-      })
-    }
+  const isSelectedComponent = activeAsset?.id === node.id && isComponentType
+
+  const handleSelect = () => {
+    onClickAsset(node, isComponentType)
   }
 
   return (
     <div>
       <NodeLabel
-        handleCollapsed={handleCollapsed}
+        handleSelect={handleSelect}
         labelValue={name}
         hasChildren={hasChildren}
-        isCollapsed={isCollapsed}
+        isCollapsed={isExpanded}
         nodeType={nodeType}
         sensorType={sensorType}
         status={status}
@@ -162,12 +152,18 @@ const Node = ({ node, activeAsset, onClickAsset }: NodeProps) => {
       {hasChildren && (
         <ul
           className={cn('block ml-[1.5rem] ps-5', {
-            hidden: !isCollapsed,
+            hidden: !isExpanded,
             'border-l border-card': hasChildren,
           })}
         >
           {children.map((row) => (
-            <Node key={row.id} node={row} onClickAsset={onClickAsset} activeAsset={activeAsset} />
+            <Node
+              key={row.id}
+              node={row}
+              onClickAsset={onClickAsset}
+              activeAsset={activeAsset}
+              expandedNodes={expandedNodes}
+            />
           ))}
         </ul>
       )}
@@ -175,13 +171,19 @@ const Node = ({ node, activeAsset, onClickAsset }: NodeProps) => {
   )
 }
 
-export default function TreeView({ data, activeAsset, onClickAsset }: ThreeViewProps) {
+export default function TreeView({ data, activeAsset, onClickAsset, expandedNodes }: ThreeViewProps) {
   return (
     <Virtuoso
       style={{ height: '100%' }}
       totalCount={data.length}
       itemContent={(index) => (
-        <Node key={data[index].id} node={data[index]} onClickAsset={onClickAsset} activeAsset={activeAsset} />
+        <Node
+          key={data[index].id}
+          node={data[index]}
+          onClickAsset={onClickAsset}
+          activeAsset={activeAsset}
+          expandedNodes={expandedNodes}
+        />
       )}
     />
   )

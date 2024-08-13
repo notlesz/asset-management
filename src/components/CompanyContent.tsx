@@ -4,13 +4,76 @@ import Search from './Search'
 import TreeView from './TreeView'
 import useCompanyTree from '../hooks/useCompanyTree'
 import Filters from './Filters'
+import { useCallback, useEffect, useState } from 'react'
+import { TreeNode } from '../utils/build-company-tree'
+
+const getParents = (node: TreeNode, treeMap: Map<string, TreeNode>) => {
+  const parents = []
+  let current = node
+  while (current.parentId) {
+    current = treeMap.get(current.parentId) as TreeNode
+    if (current) {
+      parents.unshift(current.id)
+    } else {
+      break
+    }
+  }
+
+  return parents
+}
 
 export default function CompanyContent() {
-  const { activeCompany, activeFilter, search, handleSearch, handleActiveAsset, activeAsset } = useUnitContext()
+  const { activeCompany, activeFilter, search, activeAsset, handleSearch, handleActiveAsset } = useUnitContext()
 
-  const { companyTree, isLoading } = useCompanyTree({ activeCompany, activeFilter, search })
+  const { companyNodes, companyRoot, isLoading } = useCompanyTree({ activeCompany, activeFilter, search })
 
-  const hasData = !!companyTree.length
+  const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set())
+
+  const hasData = !!companyRoot.length
+
+  const handleToggle = useCallback(
+    (node: TreeNode, isComponentType: boolean) => {
+      const { id, name, locationId, sensorType, status, parentId, gatewayId, sensorId } = node
+
+      setExpandedNodes((prevExpanded) => {
+        const newExpanded = new Set(prevExpanded)
+        if (newExpanded.has(node.id)) {
+          newExpanded.delete(node.id)
+        } else {
+          newExpanded.add(node.id)
+        }
+        return newExpanded
+      })
+      if (isComponentType) {
+        handleActiveAsset({ id, name, locationId: locationId!, sensorType, status, parentId, gatewayId, sensorId })
+      }
+    },
+    [handleActiveAsset]
+  )
+
+  useEffect(() => {
+    const nodesToExpand = new Set() as Set<string>
+    if (search) {
+      companyNodes.forEach((node) => {
+        const nodeMatchesSearch = node.name.toLowerCase().includes(search.toLowerCase())
+
+        if (nodeMatchesSearch) {
+          const ancestors = getParents(node, companyNodes)
+
+          ancestors.forEach((id) => nodesToExpand.add(id))
+
+          nodesToExpand.add(node.id)
+        }
+      })
+
+      companyNodes.forEach((node) => {
+        if (node.children && node.children.some((child: TreeNode) => nodesToExpand.has(child.id))) {
+          nodesToExpand.add(node.id)
+        }
+      })
+    }
+    setExpandedNodes(nodesToExpand)
+  }, [search, companyNodes])
 
   return (
     <div className="flex flex-col gap-3 h-full bg-white border rounded border-card px-4 py-[18px] overflow-hidden">
@@ -29,9 +92,10 @@ export default function CompanyContent() {
               <span className="text-gray-600 text-sm block text-center mt-4">Carregando...</span>
             ) : hasData ? (
               <TreeView
-                data={companyTree}
-                onClickAsset={(nextAsset) => handleActiveAsset(nextAsset)}
+                data={companyRoot}
+                onClickAsset={handleToggle}
                 activeAsset={activeAsset}
+                expandedNodes={expandedNodes}
               />
             ) : (
               <span className="text-gray-600 text-sm block text-center mt-4">
