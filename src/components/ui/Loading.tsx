@@ -1,6 +1,7 @@
 import { tv, VariantProps } from 'tailwind-variants'
-import { cn } from '../utils/cn'
+
 import { HTMLProps } from 'react'
+import { cn } from '../../utils/cn'
 
 const loadingStyles = tv({
   base: 'animate-spin border-solid border-white border-t-main rounded-full',

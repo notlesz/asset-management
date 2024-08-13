@@ -1,5 +1,5 @@
 import { AiOutlineSearch } from 'react-icons/ai'
-import Button from './Button'
+import Button from './ui/Button'
 
 interface SearchProps {
   value: string

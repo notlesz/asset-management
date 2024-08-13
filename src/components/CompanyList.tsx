@@ -1,10 +1,11 @@
 import { AiOutlineGold } from 'react-icons/ai'
 import useUnitContext from '../hooks/useCompanyContext'
 import { cn } from '../utils/cn'
-import Button from './Button'
+
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { getCompanies } from '../service/api'
 import { useEffect } from 'react'
+import Button from './ui/Button'
 
 export default function CompanyList() {
   const { handleActiveCompany, activeCompany } = useUnitContext()

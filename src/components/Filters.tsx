@@ -1,7 +1,7 @@
 import { AiOutlineExclamationCircle, AiOutlineThunderbolt } from 'react-icons/ai'
 import { Filter } from '../context/type'
 import useUnitContext from '../hooks/useCompanyContext'
-import Button from './Button'
+import Button from './ui/Button'
 import { cn } from '../utils/cn'
 
 export default function Filters() {

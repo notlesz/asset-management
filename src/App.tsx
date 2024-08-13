@@ -1,8 +1,7 @@
 import { Suspense } from 'react'
 import Header from './components/Header'
 import UnitContent from './components/CompanyContent'
-
-import Loading from './components/Loading'
+import Loading from './components/ui/Loading'
 
 const FallBackLoading = () => (
   <div className="w-screen h-screen flex justify-center items-center">
