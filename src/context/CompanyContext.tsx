@@ -11,6 +11,7 @@ export default function CompanyContextProvider({ children }: { children: React.R
 
   const handleActiveCompany = (nextUnit: Company) => {
     handleActiveFilter(null)
+    handleSearch('')
 
     dispatch({
       type: ActionTypes.SET_ACTIVE_UNIT,
@@ -18,7 +19,7 @@ export default function CompanyContextProvider({ children }: { children: React.R
     })
   }
 
-  const handleSearch = (query: string) =>
+  const handleSearch = (query: string | null) =>
     dispatch({
       type: ActionTypes.SET_SEARCH,
       payload: query,
