@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { getAssets, getLocations } from '../service/api'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
-import buildTree from '../utils/build-unit-tree'
-import filterUnit from '../utils/filter-unit'
+import buildCompanyTree, { TreeNode } from '../utils/build-company-tree'
 import { Company, FilterType } from '../context/type'
+import filterCompanyTree from '../utils/filter-company-tree'
 
 interface UseCompanyTreeProps {
   activeCompany: Company | null
@@ -12,7 +12,14 @@ interface UseCompanyTreeProps {
   search: string
 }
 
+interface CompanyTree {
+  tree: TreeNode[]
+  map: Map<string, TreeNode>
+}
+
 export default function useCompanyTree({ activeCompany, activeFilter, search }: UseCompanyTreeProps) {
+  const [companyTree, setCompanyTree] = useState<CompanyTree>({ tree: [], map: new Map<string, TreeNode>() })
+
   const { data: assets, isLoading: isLoadingAssets } = useQuery({
     queryKey: ['assets', activeCompany],
     queryFn: () => getAssets(activeCompany!.id),
@@ -25,23 +32,23 @@ export default function useCompanyTree({ activeCompany, activeFilter, search }: 
     enabled: !!activeCompany,
   })
 
-  const buildCompanyTree = useMemo(() => {
+  useEffect(() => {
     if (assets && locations) {
-      return buildTree(locations, assets)
+      const buildedTree = buildCompanyTree(locations, assets)
+      setCompanyTree(buildedTree)
     }
-
-    return []
   }, [assets, locations])
 
   const listUnitsFiltered = useMemo(
-    () => filterUnit([...buildCompanyTree], { search, activeFilter }),
-    [search, activeFilter, buildCompanyTree]
+    () => filterCompanyTree(companyTree.tree, { search, activeFilter }),
+    [search, activeFilter, companyTree]
   )
 
   const isLoading = isLoadingAssets || isLoadingLocations
 
   return {
-    companyTree: listUnitsFiltered,
+    companyRoot: listUnitsFiltered,
+    companyNodes: companyTree?.map,
     isLoading,
   }
 }
