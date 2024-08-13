@@ -36,8 +36,9 @@ The design of the application can be viewed on [Figma](https://www.figma.com/fil
 
 Below, you can check out a demonstration video that shows the application opening for each company and selecting filters:
 
-<video controls>
+<video controls width="100%" >
   <source src="public/demonstrating.mp4" type="video/mp4">
+  Your browser does not support the video tag.
 </video>
 
 ## Improvement Points
