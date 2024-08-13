@@ -6,6 +6,8 @@ import useCompanyTree from '../hooks/useCompanyTree'
 import Filters from './Filters'
 import { useCallback, useEffect, useState } from 'react'
 import { TreeNode } from '../utils/build-company-tree'
+import { Filter } from '../context/type'
+import { Sensor, Status } from '../types'
 
 const getParents = (node: TreeNode, treeMap: Map<string, TreeNode>) => {
   const parents = []
@@ -20,6 +22,17 @@ const getParents = (node: TreeNode, treeMap: Map<string, TreeNode>) => {
   }
 
   return parents
+}
+
+const matchFilter = (node: TreeNode, activeFilter: Filter | null, search: string): boolean => {
+  const isCriticalFilter = activeFilter === Filter.CRITICAL
+  const isEnergySensorFilter = activeFilter === Filter.ENERGY_SENSOR
+
+  const matchEnergySensor = isEnergySensorFilter && node.sensorType === Sensor.ENERGY
+  const matchCriticalFilter = isCriticalFilter && node.status === Status.ALERT
+  const matchSearch = node.name.toLowerCase().includes(search.toLowerCase())
+
+  return matchEnergySensor || matchCriticalFilter || matchSearch
 }
 
 export default function CompanyContent() {
@@ -53,12 +66,12 @@ export default function CompanyContent() {
 
   useEffect(() => {
     const nodesToExpand = new Set() as Set<string>
-    if (search) {
+    if (search || activeFilter) {
       companyNodes.forEach((node) => {
-        const nodeMatchesSearch = node.name.toLowerCase().includes(search.toLowerCase())
-
-        if (nodeMatchesSearch) {
+        const nodeMatchesFilter = matchFilter(node, activeFilter, search)
+        if (nodeMatchesFilter) {
           const ancestors = getParents(node, companyNodes)
+          console.log(ancestors)
 
           ancestors.forEach((id) => nodesToExpand.add(id))
 
@@ -73,7 +86,7 @@ export default function CompanyContent() {
       })
     }
     setExpandedNodes(nodesToExpand)
-  }, [search, companyNodes])
+  }, [search, companyNodes, activeFilter])
 
   return (
     <div className="flex flex-col gap-3 h-full bg-white border rounded border-card px-4 py-[18px] overflow-hidden">
