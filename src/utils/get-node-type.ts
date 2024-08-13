@@ -1,4 +1,4 @@
-import { TreeNode } from './build-unit-tree'
+import { TreeNode } from './build-company-tree'
 
 export type NodeType = 'location' | 'sub-location' | 'asset' | 'component'
 
