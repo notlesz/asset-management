@@ -25,4 +25,6 @@ export interface Asset {
   parentId: string | null
   sensorType?: SensorType
   status?: StatusType
+  gatewayId?: string | null
+  sensorId?: string | null
 }

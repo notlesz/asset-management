@@ -38,14 +38,14 @@ export default function ComponentData() {
             <h4 className="text-gray-950 font-semibold text-base mb-2">Sensor</h4>
             <div className="flex gap-2 items-center">
               <MdWifiTethering size={20} className="text-blue-500" />
-              <span className="font-normal text-gray-500">HIO4510</span>
+              <span className="font-normal text-gray-500">{activeAsset?.sensorId}</span>
             </div>
           </div>
           <div className="flex-1">
             <h4 className="text-gray-950 font-semibold text-base mb-2">Receptor</h4>
             <div className="flex gap-2 items-center">
               <MdOutlineRouter size={20} className="text-blue-500" />
-              <span className="font-normal text-gray-500">EUH4R27</span>
+              <span className="font-normal text-gray-500">{activeAsset?.gatewayId}</span>
             </div>
           </div>
         </section>
