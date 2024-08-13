@@ -10,6 +10,8 @@ export default function CompanyContextProvider({ children }: { children: React.R
   const [unitData, dispatch] = useReducer(reducer, INITIAL_STATE)
 
   const handleActiveCompany = (nextUnit: Company) => {
+    handleActiveFilter(null)
+
     dispatch({
       type: ActionTypes.SET_ACTIVE_UNIT,
       payload: nextUnit,
