@@ -29,7 +29,7 @@ const matchFilter = (node: TreeNode, activeFilter: Filter | null, search: string
   const isEnergySensorFilter = activeFilter === Filter.ENERGY_SENSOR
 
   const matchEnergySensor = isEnergySensorFilter && node.sensorType === Sensor.ENERGY
-  const matchCriticalFilter = isCriticalFilter && node.status === Status.ALERT
+  const matchCriticalFilter = isCriticalFilter && node.status === Status.ALERT && node.sensorType !== Sensor.ENERGY
   const matchSearch = node.name.toLowerCase().includes(search.toLowerCase())
 
   return matchEnergySensor || matchCriticalFilter || matchSearch

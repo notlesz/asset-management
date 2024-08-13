@@ -15,7 +15,7 @@ export default function filterCompanyTree(
 
   const matchesFilter = (node: TreeNode): boolean => {
     const matchEnergySensor = isEnergySensorFilter && node.sensorType === Sensor.ENERGY
-    const matchCriticalFilter = isCriticalFilter && node.status === Status.ALERT
+    const matchCriticalFilter = isCriticalFilter && node.status === Status.ALERT && node.sensorType !== Sensor.ENERGY
 
     return matchEnergySensor || matchCriticalFilter
   }
@@ -42,7 +42,7 @@ export default function filterCompanyTree(
       if (nodeMatchesFilter && nodeMatchesSearch) {
         filteredNodes.push({
           ...node,
-          children: filteredChildren.length > 0 ? filteredChildren : undefined,
+          children: filteredChildren,
         })
       }
 
