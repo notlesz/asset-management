@@ -1,5 +1,5 @@
 import { VariantProps, tv } from 'tailwind-variants'
-import { cn } from '../../utils/cn'
+import { cn } from '../../../utils/cn'
 
 const buttonVariants = tv({
   base: 'font-semibold text-gray-600 rounded flex items-center cursor-pointer',
@@ -30,7 +30,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export default function Button(props: ButtonProps) {
   const { children, className, variant, size, ...rest } = props
   return (
-    <button {...rest} className={cn(buttonVariants({ variant, size }), className)}>
+    <button {...rest} data-cy="button" className={cn(buttonVariants({ variant, size }), className)}>
       {children}
     </button>
   )
