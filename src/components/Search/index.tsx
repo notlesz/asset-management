@@ -1,5 +1,5 @@
 import { AiOutlineSearch } from 'react-icons/ai'
-import Button from './ui/Button'
+import Button from '../ui/Button'
 
 interface SearchProps {
   value: string
@@ -13,7 +13,7 @@ export default function Search({ handleSearch, value }: SearchProps) {
   }
 
   return (
-    <div className="flex pe-3 border-b  border-card">
+    <div className="flex pe-3 border-b border-card">
       <input
         value={value}
         type="text"
